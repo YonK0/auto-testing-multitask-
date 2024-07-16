@@ -15,6 +15,19 @@ from appium.options.common import AppiumOptions
 import multiprocessing
 import logging
 
+#this function for handle interacting with elements and handle their error
+def interact_with_element(wait, by_type, identifier, action="click", keys=None, log_queue=None, udid=None):
+    try:
+        element = wait.until(EC.element_to_be_clickable((by_type, identifier)))
+        if action == "click":
+            element.click()
+        elif action == "send_keys":
+            element.clear()  # Clear the field before sending keys if needed
+            element.send_keys(keys)
+        log_queue.put(f"{udid}: {identifier} - successfully interacted.")
+    except Exception as e:
+        log_queue.put(f"{udid}: Failed to interact with {identifier} - {str(e)}")
+
 
 # Function to read UDIDs from file
 def read_udids_from_file(file_path):
@@ -38,22 +51,21 @@ def check_adb_connection(udid):
         return False
     
 # Logging thread function to handle log messages
-def logging_thread(log_queue):
-    while True:
+def logging_thread(log_queue,log_filename):
+    logging.basicConfig(filename=log_filename, level=logging.INFO, format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+    running = True
+    while running:
         while not log_queue.empty():
             log_entry = log_queue.get()
-            # Add timestamp to log entry
-            timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
-            log_message = f"{timestamp} - {log_entry}"
-            # Log the message to console or file
-            logging.info(log_message)  # root logger
+            if log_entry == "STOP_LOGGING":
+                running = False
+            else:
+                logging.info(log_entry)  # Log to file
+        time.sleep(0.1)  # Reduce CPU usage by sleeping a bit
 
-        time.sleep(0.1)  # 0.1 second
-
-
-def login_and_download(instance_port,  udid ):
+def login_and_download(instance_port,  udid , log_queue):
     try : 
-        # ADB Connection ########################################################################################
+        ######################################## ADB Connection #################################################
         log_queue.put("starting ..............")
         adb_command = f"adb connect {udid}"
         process = subprocess.Popen(adb_command.split(), stdout=subprocess.PIPE)
@@ -66,7 +78,7 @@ def login_and_download(instance_port,  udid ):
         log_queue.put(f"adb connected to {udid}")
         #########################################################################################################
 
-        # Appium Connection #####################################################################################
+        ########################################## Appium Connection ############################################
         appium_service = AppiumService()
         appium_service.start(args=['--address', '127.0.0.1', '--port', str(instance_port),'-pa' ,'/wd/hub'])
         desired_caps = {
@@ -81,49 +93,15 @@ def login_and_download(instance_port,  udid ):
         #                                           Auto Test                                                   #
         #########################################################################################################
         wait = WebDriverWait(driver, 60)# /* definition of element wait delay */
-        
-        time.sleep(1.5)
-        el1 = wait.until(EC.element_to_be_clickable((By.XPATH,"//androidx.viewpager.widget.b[@resource-id=\"com.uncube.launcher3:id/desktop\"]/android.view.ViewGroup/android.view.View[3]")))
-        el1.click()
-        log_queue.put(f"{udid}: button one clicked ")
-        el2 = wait.until(EC.element_to_be_clickable((By.ID, "tn.mobipost:id/btn_welcome_with_card")))
-        el2.click()
-        el3 = wait.until(EC.element_to_be_clickable((By.ID,"tn.mobipost:id/et_register_cin")))
-        el3.clear()
-        el3.send_keys("99999999")
-        el5 = wait.until(EC.element_to_be_clickable((By.ID,"tn.mobipost:id/et_register_cart_code")))
-        el5.clear()
-        el5.send_keys(1234)
-        # el6 = wait.until(EC.element_to_be_clickable((By.ID,"android:id/button1")))
-        # el6.click()
-        # el7 = wait.until(EC.element_to_be_clickable((By.XPATH,'(//android.widget.CheckBox[@resource-id="android:id/checkbox"])[3]')))
-        # el7.click()
-        # el8 = wait.until(EC.element_to_be_clickable((By.XPATH,"/hierarchy/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[2]/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.ListView/android.widget.LinearLayout[8]/android.widget.RelativeLayout/android.widget.TextView")))
-        # el8.click()
-        # #el9 = wait.until(EC.element_to_be_clickable((By.XPATH,"/hierarchy/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[2]/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.ListView/android.widget.LinearLayout[5]/android.widget.RelativeLayout")))
-        # #el9.click()
-        # el10 = wait.until(EC.element_to_be_clickable((By.ID,"android:id/edit")))
-        # log_queue.put(username)
-        # el10.clear()
-        # el10.send_keys(username)
-        # el11 = wait.until(EC.element_to_be_clickable((By.ID,"android:id/button1")))
-        # el11.click()
-        # el12 = wait.until(EC.element_to_be_clickable((By.XPATH,"/hierarchy/android.widget.FrameLayout/android.view.ViewGroup/android.widget.FrameLayout[2]/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.ListView/android.widget.LinearLayout[9]/android.widget.RelativeLayout")))
-        # el12.click()
-        # el13 = wait.until(EC.element_to_be_clickable((By.ID,"android:id/edit")))
-        # el13.clear()
-        # el13.send_keys(password)
-        # el14 = wait.until(EC.element_to_be_clickable((By.ID,"android:id/button1")))
-        # el14.click()
-        # el14 = wait.until(EC.element_to_be_clickable((By.ID,"net.typeblog.socks:id/switch_action_button")))
-        # el14.click()
-        # try :
-        #     el14 = wait.until(EC.element_to_be_clickable((By.ID,"android:id/button1")))
-        #     el14.click()
-        # except : 
-        #     log_queue.put("")
+
+        interact_with_element(wait, By.XPATH, "//android.widget.TextView[@resource-id=\"com.spotify.music:id/bottom_navigation_item_title\" and @text=\"Search\"]", log_queue=log_queue, udid=udid)
+        interact_with_element(wait, By.ID, "com.spotify.music:id/find_search_field_text", log_queue=log_queue, udid=udid)
+        interact_with_element(wait, By.ID, "com.spotify.music:id/query", action="send_keys", keys="mozart", log_queue=log_queue, udid=udid)
+        interact_with_element(wait, By.XPATH, "(//android.view.ViewGroup[@resource-id=\"com.spotify.music:id/row_root\"])[5]", log_queue=log_queue, udid=udid)
+        interact_with_element(wait, By.ID, "com.spotify.music:id/button_play_and_pause", log_queue=log_queue, udid=udid)
+
         log_queue.put("testing is completed")
-        time.sleep(2)
+        time.sleep(1)
         #########################################################################################################
 
     except Exception as e:
@@ -135,9 +113,10 @@ if __name__ == "__main__":
 
     # Create a queue for logging
     log_queue = multiprocessing.Queue()
+    log_filename = "automation_log.txt"  # Define the log file name
     
     # Start logging thread /* main program thread */
-    logging_thread = threading.Thread(target=logging_thread, args=(log_queue,))
+    logging_thread = threading.Thread(target=logging_thread, args=(log_queue,log_filename))
     logging_thread.start()
 
     udids_file = "devices.txt"  # Path to the file containing UDIDs
@@ -147,7 +126,7 @@ if __name__ == "__main__":
     for i, udid in enumerate(udids):
         instance_port = 4723 + i   # every instance should connect to different appium server port
         
-        process = multiprocessing.Process(target=login_and_download, args=(instance_port, udid))
+        process = multiprocessing.Process(target=login_and_download, args=(instance_port, udid, log_queue))
         processes.append(process)
         process.start()
 
@@ -155,6 +134,9 @@ if __name__ == "__main__":
     for process in processes:
         process.join()
 
+    log_queue.put("STOP_LOGGING")  # Signal to stop the logging thread
+    logging_thread.join()  # Wait for the logging thread to terminate
+    
     # Log final completion message with timestamp
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
     logging.info(f"{timestamp} - Automation complete.")
