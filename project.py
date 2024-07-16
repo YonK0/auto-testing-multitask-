@@ -51,8 +51,8 @@ def check_adb_connection(udid):
         return False
     
 # Logging thread function to handle log messages
-def logging_thread(log_queue,log_filename):
-    logging.basicConfig(filename=log_filename, level=logging.INFO, format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+def logging_thread(log_queue):
+    logging.basicConfig(filename="automation_log.txt", level=logging.INFO, format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     running = True
     while running:
         while not log_queue.empty():
@@ -64,7 +64,12 @@ def logging_thread(log_queue,log_filename):
         time.sleep(0.1)  # Reduce CPU usage by sleeping a bit
 
 def login_and_download(instance_port,  udid , log_queue):
-    try : 
+
+    # Start logging thread /* for every process */
+    logging_thread = threading.Thread(target=logging_thread, args=(log_queue,))
+    logging_thread.start()
+
+    try :
         ######################################## ADB Connection #################################################
         log_queue.put("starting ..............")
         adb_command = f"adb connect {udid}"
@@ -113,12 +118,7 @@ if __name__ == "__main__":
 
     # Create a queue for logging
     log_queue = multiprocessing.Queue()
-    log_filename = "automation_log.txt"  # Define the log file name
     
-    # Start logging thread /* main program thread */
-    logging_thread = threading.Thread(target=logging_thread, args=(log_queue,log_filename))
-    logging_thread.start()
-
     udids_file = "devices.txt"  # Path to the file containing UDIDs
     udids = read_udids_from_file(udids_file)
     processes = []
