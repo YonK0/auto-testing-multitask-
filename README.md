@@ -55,3 +55,4 @@ Also i updoaded a simple video , showing how it works with 2 bluestacks instance
 https://www.youtube.com/watch?v=DzMka7yeTKo
 
 Im willing to upload another video showing more complex steps with more instances , on a Linux machine in the future.
+Also im willing to improve these Readme file , so please enjoy it ! 
