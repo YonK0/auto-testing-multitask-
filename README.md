@@ -1,6 +1,7 @@
 # Auto testing mobile apps (multitasking) Description : 
 this script uses multithread and multiprocess makes more easier to run auto testing for mobile apps with logging .
 this is the workflow of the script : 
+
 ![image](https://github.com/user-attachments/assets/79c2e1c9-82c1-4de5-8ef3-7042e1d4693c)
 
 PS : this project can run on Windows and Linux.
@@ -18,9 +19,11 @@ personally i tried with nox , bluestacks and genymotion (best one for me ).
 
 # Adb 
 ![image](https://github.com/user-attachments/assets/8c3171f0-450f-4f3c-9f6f-53f7ae1bc81b)
+
 Android Debug Bridge ( adb ) is a versatile command-line tool that lets you communicate with a device.
 
 1.adb address and port you can find in parameters on the emulator for example : 
+
 ![image](https://github.com/user-attachments/assets/b550cfa9-e22c-4ec5-b03f-45216f709014)
 
 2.after you got the address and port copy them to devices.txt if you want that devices included.
@@ -29,11 +32,14 @@ Android Debug Bridge ( adb ) is a versatile command-line tool that lets you comm
 # Running multitask script : 
 
 now have adb and appium installed and setted up , let's run our script !!!  
+
 ![image](https://github.com/user-attachments/assets/bfcfbdfa-52d0-44f8-a89d-57ddaecc36b1)
+
 as the image show , we are ready to run the script : 
 ` python multitask.py `
 
 Now you can see all instances are running the auto testing at the same time , meanwhile the logging is running too (automation.log).
+
 ![image](https://github.com/user-attachments/assets/3cbe6723-7716-4786-8b85-427365111d12)
 
 Check log while the multitasking in running   : ` tail -f  automation.log ` || or notepad++ in windows  
