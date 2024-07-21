@@ -1,6 +1,4 @@
-# auto-testing-multitask-
-Auto-testing multitask for mobile apps 
-
+# Auto testing mobile apps (multitasking)
 
 -Added : queue between process to handle the log file , maybe need to add file handler ???
 
