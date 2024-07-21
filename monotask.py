@@ -10,6 +10,8 @@ from appium.webdriver.common.appiumby import By
 from appium.webdriver.appium_service import AppiumService
 from appium.options.common import AppiumOptions
 import socket
+#import auto testing steps from auto test file
+from  auto_test import * 
 
 
 def interact_with_element(wait, by_type, identifier, action="click", keys=None, print=None, udid=None):
@@ -44,15 +46,8 @@ def session_manager(instance_port, udid):
         option = AppiumOptions().load_capabilities(desired_caps)
         driver = webdriver.Remote(f'http://127.0.0.1:{instance_port}/wd/hub', options=option)
 
-        wait = WebDriverWait(driver, 60)
-
-        # Interactions go here
-        interact_with_element(wait, By.XPATH, "//android.widget.TextView[@resource-id=\"com.spotify.music:id/bottom_navigation_item_title\" and @text=\"Search\"]", print=print, udid=udid)
-        interact_with_element(wait, By.ID, "com.spotify.music:id/find_search_field_text", print=print, udid=udid)
-        interact_with_element(wait, By.ID, "com.spotify.music:id/query", action="send_keys", keys="mozart", print=print, udid=udid)
-        interact_with_element(wait, By.XPATH, "(//android.view.ViewGroup[@resource-id=\"com.spotify.music:id/row_root\"])[5]", print=print, udid=udid)
-        interact_with_element(wait, By.ID, "com.spotify.music:id/button_play_and_pause", print=print, udid=udid)
-
+        #run auto testing
+        Auto_test_steps()
 
         print("testing is completed")
 

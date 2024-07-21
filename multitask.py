@@ -10,6 +10,8 @@ from appium.webdriver.common.appiumby import By
 from appium.webdriver.appium_service import AppiumService
 from appium.options.common import AppiumOptions
 import socket
+#import auto testing steps from auto test file
+from  auto_test import *
 
 class IgnoreConnectionErrors(logging.Filter):
     def filter(self, record):
@@ -74,15 +76,9 @@ def session_manager(instance_port, udid, barrier):
         #wait for all instance to be ready at the same time : if there is a problem with appium server
         barrier.wait()
 
-        wait = WebDriverWait(driver, 60)
-
-        # Interactions go here
-        interact_with_element(wait, By.XPATH, "//android.widget.TextView[@resource-id=\"com.spotify.music:id/bottom_navigation_item_title\" and @text=\"Search\"]", log_queue=log_queue, udid=udid)
-        interact_with_element(wait, By.ID, "com.spotify.music:id/find_search_field_text", log_queue=log_queue, udid=udid)
-        interact_with_element(wait, By.ID, "com.spotify.music:id/query", action="send_keys", keys="mozart", log_queue=log_queue, udid=udid)
-        interact_with_element(wait, By.XPATH, "(//android.view.ViewGroup[@resource-id=\"com.spotify.music:id/row_root\"])[5]", log_queue=log_queue, udid=udid)
-        interact_with_element(wait, By.ID, "com.spotify.music:id/button_play_and_pause", log_queue=log_queue, udid=udid)
-
+        #run auto testing
+        Auto_test_steps()
+        
         # Wait for all processes to reach this point
         barrier.wait()
 
