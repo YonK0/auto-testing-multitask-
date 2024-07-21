@@ -1,0 +1,5 @@
+{
+    "appPackage": "com.spotify.music",
+    "appActivity": "com.spotify.music.MainActivity",
+    "noReset": true
+}

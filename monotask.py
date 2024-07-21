@@ -1,6 +1,7 @@
 import multiprocessing
 import subprocess
 import time
+import json
 import logging
 from threading import Thread
 from appium import webdriver
@@ -35,13 +36,17 @@ def session_manager(instance_port, udid):
         appium_service = AppiumService()
         appium_service.start(args=['--address', '127.0.0.1', '--port', str(instance_port), '-pa', '/wd/hub'])
 
+        #load app data from config file // Example : spotify apk
+        with open('config.json', 'r') as config_file:
+            config = json.load(config_file)
+
         desired_caps = {
             'platformName': 'Android',
             'automationName': 'UiAutomator2',
             'udid': str(udid),
-            "appPackage": "com.spotify.music",
-            "appActivity": "com.spotify.music.MainActivity",
-            "noReset": True,  # Preserve app data & state
+            "appPackage": config["appPackage"],
+            "appActivity": config["appActivity"],
+            "noReset": config["noReset"],  # Preserve app data & state
         }
         option = AppiumOptions().load_capabilities(desired_caps)
         driver = webdriver.Remote(f'http://127.0.0.1:{instance_port}/wd/hub', options=option)
