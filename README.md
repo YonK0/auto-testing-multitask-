@@ -48,7 +48,10 @@ Now you can see all instances are running the auto testing at the same time , me
 
 Check log while the multitasking in running   : ` tail -f  automation.log ` || or notepad++ in windows  
 
-
-
 PS: you can open whatever number of instances you want , just make sure you have enough resources to run it ! 
 
+
+Also i updoaded a simple video , showing how it works with 2 bluestacks instances (windows) : 
+https://www.youtube.com/watch?v=DzMka7yeTKo
+
+Im willing to upload another video showing more complex steps with more instances , on a Linux machine in the future.
