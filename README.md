@@ -6,12 +6,16 @@ this is the workflow of the script :
 
 PS : this project can run on Windows and Linux.
 
+# Detailed installation and setting Up
+You can find detailed installation of all used tools in my old repo :
+https://github.com/YonK0/appium-multithread
+
 # Appium 
 
 ![image](https://github.com/user-attachments/assets/15b84812-a6bf-41a6-8b81-f437a720812a)
 
 Appium is a mobile automation testing tool which is used to automate mobile applications on different mobile operating systems such as Android and iOS.
-Installation : //TODO
+
 
 # Emulator used : Any Android emulator can be used here
 personally i tried with nox , bluestacks and genymotion (best one for me ).
